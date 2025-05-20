@@ -288,5 +288,3 @@ exports.resetPassword = async (req, res) => {
         }
       };
       
-
-      123
