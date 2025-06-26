@@ -22,8 +22,8 @@ const getAllServices = async (req, res) => {
 
 const createService = async (req, res) => {
   try {
-    const { price, name, description, detaildescription, image, effectimage, resultimage, sensationimage } = req.body;
-    const newService = new Service({ price, name, description, detaildescription, image, effectimage, resultimage, sensationimage });
+    const { price, name, description, detaildescription, image, effectimage, resultimage, sensationimage, status } = req.body;
+    const newService = new Service({ price, name, description, detaildescription, image, effectimage, resultimage, sensationimage, status });
     await newService.save();
     res.status(201).json(newService);  // Return the created service
   } catch (err) {
