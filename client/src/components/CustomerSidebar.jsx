@@ -30,6 +30,10 @@ const CustomerSidebar = () => {
       .finally(() => setShowModal(false));
   };
 
+   const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -70,6 +74,25 @@ const CustomerSidebar = () => {
           </NavLink>
         ))}
       </List>
+
+      <Button
+        onClick={handleBackToHome}
+        sx={{
+          position: "absolute",
+          bottom: "70px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80%",
+          backgroundColor: "#E27585",
+          color: "white",
+          "&:hover": {
+            backgroundColor: "#a85663",
+          },
+          fontSize: "14px",
+        }}
+      >
+        Back To HomePage
+      </Button>
 
       <Button
         onClick={() => setShowModal(true)}

@@ -132,6 +132,11 @@ const ViewBooking = () => {
           })
         );
 
+        // Sort by newest first (createdDate)
+        const sortedBookings = bookingsWithCustomer.sort((a, b) => 
+          new Date(b.createdDate) - new Date(a.createdDate)
+        );
+
         setBookings(bookingsWithCustomer);
       } catch (err) {
         console.error(
