@@ -179,7 +179,20 @@ const ViewBooked = () => {
                       {booking.date ? new Date(booking.date).toLocaleDateString("en-GB") : "N/A"}
                     </td>
                     <td className="border px-4 py-2">{booking.time || "N/A"}</td>
-                    <td className="border px-4 py-2">{booking.status || "N/A"}</td>
+                    <td className="border px-4 py-2">
+                      <span
+                        className={`p-1 rounded ${booking.status === "Pending"
+                          ? "bg-yellow-200"
+                          : booking.status === "Confirmed"
+                            ? "bg-blue-200"
+                            : booking.status === "Completed"
+                              ? "bg-green-200"
+                              : "bg-red-200"
+                          }`}
+                      >
+                        {booking.status || "N/A"}
+                      </span>
+                    </td>
                     <td className="border px-4 py-2">
                       <span onClick={() => toggleFeedback(booking._id)} className="cursor-pointer">
                         {expandedFeedback[booking._id]
