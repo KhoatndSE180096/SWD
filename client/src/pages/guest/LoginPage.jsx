@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { EyeIcon } from "lucide-react";
 import { EyeOffIcon } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -43,8 +43,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
     setLoading(true);
 
     try {
@@ -56,7 +54,15 @@ export default function LoginPage() {
       const { id } = user;
       const fullName = `${firstName} ${lastName}`;
 
-      setSuccess(message || "Login successful!");
+      // Show success toast notification
+      toast.success(`✅ Welcome back, ${firstName}! Login successful!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
       // Store token based on Remember Me option
       if (rememberMe) {
@@ -73,7 +79,7 @@ export default function LoginPage() {
         localStorage.removeItem("rememberedEmail");
       }
 
-      // Redirect based on user roleName
+      // Redirect based on user roleName with slight delay to show toast
       let redirectUrl = "/";
       if (roleName === "Manager") redirectUrl = "/dashboard";
       else if (roleName === "Staff") redirectUrl = "/view-booking";
@@ -81,9 +87,19 @@ export default function LoginPage() {
       else if (roleName === "Admin") redirectUrl = "/staff-management";
       else if (roleName === "Customer") redirectUrl = "/about";
 
-      navigate(redirectUrl);
+      // Delay redirect slightly to show toast
+      setTimeout(() => {
+        navigate(redirectUrl);
+      }, 1000);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Something went wrong. Please try again.");
+      toast.error(`❌ ${err.response?.data?.message || err.message || "Something went wrong. Please try again."}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -98,8 +114,6 @@ export default function LoginPage() {
           <h2 className="text-center text-2xl font-bold text-[#c86c79] uppercase mb-6 md:mb-8">
             Login
           </h2>
-          {error && <div className="text-center text-red-500 mb-4">{error}</div>}
-          {success && <div className="text-center text-green-500 mb-4">{success}</div>}
 
           <form className="flex flex-col gap-4 md:gap-6" onSubmit={handleSubmit}>
             <input
@@ -118,19 +132,19 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full h-[50px] px-4 pr-10 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#c86c79]"
+                className="w-full h-[50px] px-4 pr-12 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#c86c79]"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
-                {showPassword ? <EyeIcon size={20} /> : <EyeOffIcon size={20}/>}
+                {showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
               </button>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center text-gray-700">
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -155,13 +169,16 @@ export default function LoginPage() {
           </form>
 
           <div className="text-center mt-8 text-gray-700">
-            <span>Don’t have an account?</span>{" "}
+            <span>Don't have an account?</span>{" "}
             <a href="/register" className="font-bold text-[#c86c79] hover:underline">
               Register
             </a>
           </div>
         </div>
       </div>
+      
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }
