@@ -314,21 +314,31 @@ exports.googleLogin = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create new user if doesn't exist
-      user = await User.create({
-        firstName: given_name || 'Google',
-        lastName: family_name || 'User',
+      // Nếu chưa có user, tự động tạo mới và bỏ qua xác thực email
+      const newUserData = {
+        firstName: given_name || (email ? email.split('@')[0] : 'Google'),
+        lastName: family_name || '',
         email,
         password: await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10), // Random password
         roleName: 'Customer', // Default role for Google users
-        phoneNumber: '', // Will be empty for Google users
-        verified: true, // Google accounts are pre-verified
+        verified: true, // Google accounts đăng nhập là verified luôn
         profilePicture: picture,
         isGoogleUser: true,
-      });
-    } else if (!user.verified) {
-      // If user exists but not verified, verify them
-      user.verified = true;
+      };
+      // Nếu model yêu cầu phoneNumber là unique, luôn gán giá trị duy nhất cho user Google
+      newUserData.phoneNumber = 'google_' + Date.now();
+      user = await User.create(newUserData);
+    } else {
+      // Nếu đã có user, đảm bảo đã verified
+      if (!user.verified) {
+        user.verified = true;
+        await user.save();
+      }
+      // Nếu thiếu tên, cập nhật lại
+      if (!user.firstName && given_name) user.firstName = given_name;
+      if (!user.lastName && family_name) user.lastName = family_name;
+      if (!user.profilePicture && picture) user.profilePicture = picture;
+      if (!user.isGoogleUser) user.isGoogleUser = true;
       await user.save();
     }
 
