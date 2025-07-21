@@ -13,7 +13,9 @@ const UserSchema = new Schema({
   verificationToken: { type: String },
   verificationTokenCreatedAt: { type: Date },
   resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date }
+  resetPasswordExpires: { type: Date },
+  profilePicture: { type: String }, // For Google profile picture
+  isGoogleUser: { type: Boolean, default: false } // To identify Google users
 });
 
 module.exports = mongoose.model('User', UserSchema);

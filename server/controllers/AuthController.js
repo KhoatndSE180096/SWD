@@ -3,9 +3,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
 const dotenv = require('dotenv');
 
 dotenv.config();
+
+// Initialize Google OAuth2 Client
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -281,10 +285,74 @@ exports.resetPassword = async (req, res) => {
           user.password = await bcrypt.hash(newPassword, 10);
           await user.save();
       
-          res.json({ message: "Password changed successfully" });
-        } catch (error) {
-          console.error("❌ Error changing password:", error);
-          res.status(500).json({ message: "An error occurred while changing password" });
-        }
-      };
-      
+        res.json({ message: "Password changed successfully" });
+      } catch (error) {
+        console.error("❌ Error changing password:", error);
+        res.status(500).json({ message: "An error occurred while changing password" });
+      }
+    };
+
+// Google OAuth Login
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, given_name, family_name, picture, email_verified } = payload;
+
+    if (!email_verified) {
+      return res.status(400).json({ message: "Google email not verified" });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if doesn't exist
+      user = await User.create({
+        firstName: given_name || 'Google',
+        lastName: family_name || 'User',
+        email,
+        password: await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10), // Random password
+        roleName: 'Customer', // Default role for Google users
+        phoneNumber: '', // Will be empty for Google users
+        verified: true, // Google accounts are pre-verified
+        profilePicture: picture,
+        isGoogleUser: true,
+      });
+    } else if (!user.verified) {
+      // If user exists but not verified, verify them
+      user.verified = true;
+      await user.save();
+    }
+
+    // Generate JWT token
+    const authToken = generateToken(user);
+
+    res.json({
+      message: "Google login successful",
+      token: authToken,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        roleName: user.roleName,
+        verified: user.verified,
+      },
+    });
+
+  } catch (error) {
+    console.error("❌ Google login error:", error);
+    res.status(500).json({ 
+      message: "Google authentication failed",
+      error: error.message 
+    });
+  }
+};      
