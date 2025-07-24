@@ -1,126 +1,97 @@
-🌸 VelvetySpa - Booking & Management Platform
-A modern, full-stack web application designed for spa service booking, user & staff management, and consultant operations. Built using the MERN stack with a focus on performance, security, and great user experience.
+# VelvetySpa - Booking & Management Platform
 
-🚀 Features
-🔐 User Authentication
+A modern, full-stack web application designed for spa service booking, user & staff management, and consultant operations. Built using the MERN stack with a focus on performance, security, and great user experience.---
 
-Registration, login, and email verification
+## 🚀 Features
 
-Password reset via email
+- User registration, login, and email verification
+- Role-based access: Customer, Staff, Consultant, Manager, Admin
+- Password reset via email
+- Booking management for customers and staff
+- Feedback, blog, and service management modules
+- Responsive, modern UI with professional Google login button
+- Secure JWT authentication
+- Environment variable support for easy deployment
 
-👥 Role-Based Access
+---
 
-Customer, Staff, Consultant, Manager, Admin
+## 🛠️ Tech Stack
 
-Each role has tailored dashboard and capabilities
+- **Frontend:** React, Vite, TailwindCSS, Axios, React Toastify
+- **Backend:** Node.js, Express, MongoDB, Mongoose, google-auth-library, Nodemailer
+- **Authentication:** JWT, Google OAuth2
+- **Deployment:** Vercel/Netlify (Frontend), Render/Heroku (Backend)
 
-📅 Booking Management
+---
 
-Customers can book, view, cancel services
+## ⚡ Quick Start
 
-Staff and consultants manage assigned bookings
+### 1. Clone the repository
 
-💬 Feedback & Blog
-
-Customers can leave feedback
-
-Admins manage blogs and services
-
-🎨 Modern UI
-
-Built with React, TailwindCSS, Toastify
-
-Responsive and mobile-friendly
-
-🔒 Secure Backend
-
-JWT-based authentication
-
-All passwords hashed with bcrypt
-
-Environment variables for sensitive configuration
-
-🛠️ Tech Stack
-Layer	Technology
-Frontend	React (Vite), TailwindCSS, Axios, React Toastify
-Backend	Node.js, Express.js, MongoDB, Mongoose, Nodemailer
-Auth	JWT, Email Verification
-Deployment	Vercel / Netlify (Frontend), Render / Heroku / VPS (Backend)
-
-⚡ Quick Start
-1. Clone the Repository
-bash
-Copy
-Edit
-git clone https://github.com/your-username/velvetyspa.git
+```bash
+git clone https://github.com/yourusername/velvetyspa.git
 cd velvetyspa
-2. Setup Environment Variables
-Copy .env.example to .env in both client/ and server/ directories
+```
 
-Fill in the necessary values (MongoDB URI, JWT secret, etc.)
+### 2. Setup environment variables
 
-3. Install Dependencies
-bash
-Copy
-Edit
-# Install backend
-cd server
-npm install
+- Copy `.env.example` to `.env` in both `client/` and `server/` folders and fill in your credentials.
 
-# Install frontend
-cd ../client
-npm install
-4. Run the App Locally
-bash
-Copy
-Edit
-# Start backend
-cd server
-npm run dev
+### 3. Install dependencies
 
-# Start frontend (in another terminal)
+```bash
 cd client
-npm run dev
-Frontend will typically be available at: http://localhost:5173
-Backend API will typically be running at: http://localhost:5000
+npm install
+cd ../server
+npm install
+```
 
-📦 Project Structure
-csharp
-Copy
-Edit
-velvetyspa/
-├── client/                  # Frontend - React + Vite
-│   ├── src/
-│   ├── public/
-│   └── ...
-├── server/                  # Backend - Node.js + Express
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   └── ...
-└── README.md
-🛡️ Security Notes
-Passwords are securely hashed using bcrypt
+### 4. Run the app locally
 
-Authentication handled via JWT
+- **Backend:**
+  ```bash
+  cd server
+  npm run dev
+  ```
+- **Frontend:**
+  ```bash
+  cd client
+  npm run dev
+  ```
 
-Email login verification and password reset use secure email tokens
+- Visit: [http://localhost:5173](http://localhost:5173)
 
-💡 Contribution
-We welcome contributions!
-If you'd like to propose a major feature or refactor, please open an issue first.
+---
 
-Fork the repo
+## 📦 Project Structure
 
-Create a new branch (git checkout -b feature-xyz)
+```
+client/         # React frontend (Vite)
+server/         # Node.js backend (Express, MongoDB)
+```
 
-Commit your changes
+---
 
-Push to your branch and open a Pull Request
+## 🛡️ Security Notes
 
-📄 License
+- Do NOT commit your real `.env` files. Use `.env.example` for sharing config structure.
+- All passwords are hashed, JWT is used for authentication.
+- Google login auto-creates users with unique phone numbers to avoid duplicate key errors.
+
+---
+
+## 💡 Contribution
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
 This project is licensed under the MIT License.
-Feel free to use and adapt it for your spa or service business!
 
-🙌 Stay Beautiful with VelvetySpa
-Happy building! ✨
+---
+
+**Enjoy building your spa platform!**
+# Velvety
+Velvety is a MERN stack-based application for managing skin care centers. It offers features like personalized service recommendations, appointment booking, therapist assignment, and feedback collection. Administrators can manage services, schedules, and view analytics through a powerful dashboard.
