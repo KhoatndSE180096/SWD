@@ -17,9 +17,9 @@ A modern, full-stack web application designed for spa service booking, user & st
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React, Vite, TailwindCSS, Axios, React Toastify
-- **Backend:** Node.js, Express, MongoDB, Mongoose, google-auth-library, Nodemailer
-- **Authentication:** JWT, Google OAuth2
+- **Frontend:** React, Vite
+- **Backend:** Node.js, Express, MongoDB
+- **Authentication:** JWT
 - **Deployment:** Vercel/Netlify (Frontend), Render/Heroku (Backend)
 
 ---
@@ -29,8 +29,8 @@ A modern, full-stack web application designed for spa service booking, user & st
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/velvetyspa.git
-cd velvetyspa
+git clone https://github.com/KhoatndSE180096/SWD.git
+cd SWD
 ```
 
 ### 2. Setup environment variables
