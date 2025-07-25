@@ -60,6 +60,7 @@ npm install
   ```
 
 - Visit: [http://localhost:5173](http://localhost:5173)
+- Or deploy server: [https://velvety-9ov6.vercel.app](https://velvety-9ov6.vercel.app/)
 
 ---
 
