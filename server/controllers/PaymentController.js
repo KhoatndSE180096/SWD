@@ -66,9 +66,9 @@ const createEmbeddedPaymentLink = async (req, res) => {
     const description = "Service Payment";
     const items = [{ name: service.name, quantity: 1, price: service.price }];
     const returnUrl =
-      process.env.RETURN_URL || "https://velvety.onrender.com/pay-success";
+      process.env.RETURN_URL || `${process.env.FRONT_END_URL}/pay-success`;
     const cancelUrl =
-      process.env.CANCEL_URL || "https://velvety.onrender.com/pay-failed";
+      process.env.CANCEL_URL || `${process.env.FRONT_END_URL}/pay-failed`;
 
     const paymentLinkRes = await PayOS.createPaymentLink({
       orderCode,
