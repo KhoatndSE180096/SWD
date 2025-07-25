@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "../../utils/axiosInstance";
 import StaffSidebar from "../../components/StaffSidebar";
 import { toast, ToastContainer } from "react-toastify";
-import { Pagination, Dialog,
+import {
+  Pagination,
+  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -10,8 +12,8 @@ import { Pagination, Dialog,
   Button,
   Modal,
   Box,
-  CircularProgress } from "@mui/material"; // Import Pagination component
-
+  CircularProgress,
+} from "@mui/material"; // Import Pagination component
 
 const ITEMS_PER_PAGE = 10; // Number of bookings per page
 
@@ -48,7 +50,7 @@ const ViewBooking = () => {
     setCheckinInput("");
     setCheckinModalOpen(true);
   };
-  
+
   const handleCloseCheckinModal = () => {
     setCheckinModalOpen(false);
     setSelectedBooking(null);
@@ -57,19 +59,19 @@ const ViewBooking = () => {
 
   const handleCheckinSubmit = async () => {
     if (!selectedBooking) return;
-  
+
     if (checkinInput.trim() !== selectedBooking.CheckinCode) {
       toast.error("❌ Incorrect Check-in Code");
       return;
     }
-  
+
     try {
       setCheckinLoading(true);
 
       await axios.put(`/api/booking-requests/${selectedBooking._id}/status`, {
         status: "Confirmed",
       });
-  
+
       setBookings((prev) =>
         prev.map((booking) =>
           booking._id === selectedBooking._id
@@ -80,7 +82,8 @@ const ViewBooking = () => {
       toast.success("✅ Booking confirmed successfully");
       handleCloseCheckinModal();
     } catch (err) {
-      console.error("Check-in error:", err);f
+      console.error("Check-in error:", err);
+      f;
       toast.error("❌ Failed to update booking status");
     } finally {
       setCheckinLoading(false);
@@ -99,12 +102,18 @@ const ViewBooking = () => {
       setBookings((prev) =>
         prev.map((item) =>
           item._id === selectedBooking._id
-            ? { ...item, status: "Completed", updatedDate: new Date().toISOString() }
+            ? {
+                ...item,
+                status: "Completed",
+                updatedDate: new Date().toISOString(),
+              }
             : item
         )
       );
 
-      toast.success(`✅ Booking #${selectedBooking._id} checked out successfully.`);
+      toast.success(
+        `✅ Booking #${selectedBooking._id} checked out successfully.`
+      );
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error("❌ Failed to checkout booking.");
@@ -112,8 +121,7 @@ const ViewBooking = () => {
       setLoading(false);
       handleCloseCheckoutModal();
     }
-};
-
+  };
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -125,30 +133,31 @@ const ViewBooking = () => {
         const bookingsWithCustomer = await Promise.all(
           bookingsData.map(async (booking) => {
             try {
-const customerRes = await axios.get(`/api/users/${booking.customerID}`);
-            return {
-              ...booking,
-              customerInfo: customerRes.data,
-            };
+              const customerRes = await axios.get(
+                `/api/users/${booking.customerID}`
+              );
+              return {
+                ...booking,
+                customerInfo: customerRes.data,
+              };
             } catch (err) {
               console.error("Error fetching customer info:", err);
               return {
-                       ...booking,
-                         customerInfo: {
-                           firstName: "Unknown",
-                        lastName: "Customer",
-                           email: "N/A",
-                          phoneNumber: "N/A"
-                          },
-                       };
+                ...booking,
+                customerInfo: {
+                  firstName: "Unknown",
+                  lastName: "Customer",
+                  email: "N/A",
+                  phoneNumber: "N/A",
+                },
+              };
             }
-            
           })
         );
 
         // Sort by newest first (createdDate)
-        const sortedBookings = bookingsWithCustomer.sort((a, b) => 
-          new Date(b.createdDate) - new Date(a.createdDate)
+        const sortedBookings = bookingsWithCustomer.sort(
+          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
         );
 
         setBookings(bookingsWithCustomer);
@@ -166,7 +175,6 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
     fetchBookings();
   }, []);
 
-  
   const handleConsultantClick = async (consultantID, bookingID) => {
     if (!bookingID) {
       console.error("Invalid booking ID:", bookingID);
@@ -210,9 +218,12 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
 
   const assignConsultant = async (bookingId, consultantId) => {
     try {
-      const response = await axios.put(`/api/booking-requests/${bookingId}/assign`, {
-        consultantId,
-      });
+      const response = await axios.put(
+        `/api/booking-requests/${bookingId}/assign`,
+        {
+          consultantId,
+        }
+      );
 
       const updatedBooking = response.data;
 
@@ -223,7 +234,9 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
         )
       );
 
-      toast.success(`✅ Consultant assigned successfully to Booking #${bookingId}`);
+      toast.success(
+        `✅ Consultant assigned successfully to Booking #${bookingId}`
+      );
 
       // Close modal
       setAvailableConsultants([]);
@@ -292,14 +305,14 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
       sortField === "customerInfo"
         ? `${a.customerInfo?.firstName || ""} ${a.customerInfo?.lastName || ""}`
         : sortField === "serviceID.name"
-        ? a.serviceID?.name || ""
-        : a[sortField] || "";
+          ? a.serviceID?.name || ""
+          : a[sortField] || "";
     const fieldB =
       sortField === "customerInfo"
         ? `${b.customerInfo?.firstName || ""} ${b.customerInfo?.lastName || ""}`
         : sortField === "serviceID.name"
-        ? b.serviceID?.name || ""
-        : b[sortField] || "";
+          ? b.serviceID?.name || ""
+          : b[sortField] || "";
 
     if (!isNaN(Date.parse(fieldA)) && !isNaN(Date.parse(fieldB))) {
       // Sort by date if fields are valid dates
@@ -349,13 +362,17 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
                 className="border p-2 text-center cursor-pointer"
                 onClick={() => handleColumnSort("customerInfo")}
               >
-                Customer Name {sortField === "customerInfo" && (sortOrder === "asc" ? "↑" : "↓")}
+                Customer Name{" "}
+                {sortField === "customerInfo" &&
+                  (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 className="border p-2 text-center cursor-pointer"
                 onClick={() => handleColumnSort("serviceID.name")}
               >
-                Service Name {sortField === "serviceID.name" && (sortOrder === "asc" ? "↑" : "↓")}
+                Service Name{" "}
+                {sortField === "serviceID.name" &&
+                  (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 className="border p-2 text-center cursor-pointer"
@@ -373,19 +390,18 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
                 className="border p-2 text-center cursor-pointer"
                 onClick={() => handleColumnSort("consultantID.firstName")}
               >
-                Consultant {sortField === "consultantID.firstName" && (sortOrder === "asc" ? "↑" : "↓")}
+                Consultant{" "}
+                {sortField === "consultantID.firstName" &&
+                  (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th>
-                Created date
-              </th>
-              <th>
-                Updated date
-              </th>
+              <th>Created date</th>
+              <th>Updated date</th>
               <th
                 className="border p-2 text-center cursor-pointer"
                 onClick={() => handleColumnSort("status")}
               >
-                Status {sortField === "status" && (sortOrder === "asc" ? "↑" : "↓")}
+                Status{" "}
+                {sortField === "status" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th className="border p-2 text-center">Actions</th>
             </tr>
@@ -430,64 +446,70 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
 
                 <td className="border p-2 text-center">
                   <span
-                    className={`p-1 rounded ${booking.status === "Pending"
-                      ? "bg-yellow-200"
-                      : booking.status === "Confirmed"
-                        ? "bg-blue-200"
-                        : booking.status === "Completed"
-                          ? "bg-green-200"
-                          : "bg-red-200"
-                      }`}
+                    className={`p-1 rounded ${
+                      booking.status === "Pending"
+                        ? "bg-yellow-200"
+                        : booking.status === "Confirmed"
+                          ? "bg-blue-200"
+                          : booking.status === "Completed"
+                            ? "bg-green-200"
+                            : "bg-red-200"
+                    }`}
                   >
                     {booking.status}
                   </span>
                 </td>
                 <td className="border p-2 text-center space-y-1">
-                {booking.status === "Pending" && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={() => handleOpenCheckinModal(booking)}
-                    disabled={new Date().toLocaleDateString() !== new Date(booking.date).toLocaleDateString()}
-                  >
-                    Check In
-                  </Button>
-                )}
+                  {booking.status === "Pending" && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleOpenCheckinModal(booking)}
+                      disabled={
+                        new Date().toLocaleDateString() !==
+                        new Date(booking.date).toLocaleDateString()
+                      }
+                    >
+                      Check In
+                    </Button>
+                  )}
 
-                {booking.status === "Confirmed" && (
-                  <Button
-                    variant="contained"
-                    color="success"
-                    size="small"
-                    onClick={() => handleOpenCheckoutModal(booking)} // Pass booking to the modal
-                    disabled={checkoutLoadingId === booking._id || new Date() < new Date(`${booking.date} ${booking.time}`)}
-                  >
-                    {checkoutLoadingId === booking._id ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      "Checkout"
-                    )}
-                  </Button>
-                )}
+                  {booking.status === "Confirmed" && (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      size="small"
+                      onClick={() => handleOpenCheckoutModal(booking)} // Pass booking to the modal
+                      disabled={
+                        checkoutLoadingId === booking._id ||
+                        new Date() < new Date(`${booking.date} ${booking.time}`)
+                      }
+                    >
+                      {checkoutLoadingId === booking._id ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        "Checkout"
+                      )}
+                    </Button>
+                  )}
 
-                {/* If Completed or Cancelled, show something else instead of status */}
-                {booking.status === "Completed" && (
-                  <span className="text-yellow-500 font-semibold">
-                    <i className="fas fa-lock"></i> Locked
-                  </span> // Adding a lock icon for "Locked"
-                )}
+                  {/* If Completed or Cancelled, show something else instead of status */}
+                  {booking.status === "Completed" && (
+                    <span className="text-yellow-500 font-semibold">
+                      <i className="fas fa-lock"></i> Locked
+                    </span> // Adding a lock icon for "Locked"
+                  )}
 
-                {booking.status === "Cancelled" && (
-                  <span className="text-red-500 font-semibold">
-                    <i className="fas fa-ban"></i> Blocked
-                  </span> // Adding a block icon for "Blocked"
-                )}
-              </td>
+                  {booking.status === "Cancelled" && (
+                    <span className="text-red-500 font-semibold">
+                      <i className="fas fa-ban"></i> Blocked
+                    </span> // Adding a block icon for "Blocked"
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
-
         </table>
 
         <div className="flex justify-center mt-4">
@@ -549,10 +571,11 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Verified:</span>
                   <span
-                    className={`font-semibold ${selectedConsultant.verified
-                      ? "text-green-600"
-                      : "text-red-600"
-                      }`}
+                    className={`font-semibold ${
+                      selectedConsultant.verified
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
                   >
                     {selectedConsultant.verified ? "Yes" : "No"}
                   </span>
@@ -592,9 +615,8 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
           </DialogActions>
         </Dialog>
 
-
-      {/* Checkout Modal */}
-      <Modal
+        {/* Checkout Modal */}
+        <Modal
           open={checkoutModalOpen}
           onClose={handleCloseCheckoutModal}
           aria-labelledby="checkout-modal-title"
@@ -602,7 +624,10 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
         >
           <Box className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h2 id="checkout-modal-title" className="text-xl font-semibold mb-4">
+              <h2
+                id="checkout-modal-title"
+                className="text-xl font-semibold mb-4"
+              >
                 Confirm Checkout
               </h2>
               <p id="checkout-modal-description" className="mb-4">
@@ -622,13 +647,16 @@ const customerRes = await axios.get(`/api/users/${booking.customerID}`);
                   disabled={loading}
                   className="ml-2"
                 >
-                  {loading ? <CircularProgress size={20} color="inherit" /> : "Confirm"}
+                  {loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    "Confirm"
+                  )}
                 </Button>
               </div>
             </div>
           </Box>
         </Modal>
-
 
         {/* Modal for Assigning Consultant */}
         {currentBooking && availableConsultants.length > 0 && (
