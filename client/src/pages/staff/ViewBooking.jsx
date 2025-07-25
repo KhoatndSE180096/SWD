@@ -80,7 +80,7 @@ const ViewBooking = () => {
       toast.success("✅ Booking confirmed successfully");
       handleCloseCheckinModal();
     } catch (err) {
-      console.error("Check-in error:", err);
+      console.error("Check-in error:", err);f
       toast.error("❌ Failed to update booking status");
     } finally {
       setCheckinLoading(false);
@@ -124,12 +124,31 @@ const ViewBooking = () => {
         // Map qua và fetch từng user
         const bookingsWithCustomer = await Promise.all(
           bookingsData.map(async (booking) => {
-            const customerRes = await axios.get(`/api/users/${booking.customerID}`);
+            try {
+const customerRes = await axios.get(`/api/users/${booking.customerID}`);
             return {
               ...booking,
               customerInfo: customerRes.data,
             };
+            } catch (err) {
+              console.error("Error fetching customer info:", err);
+              return {
+                       ...booking,
+                         customerInfo: {
+                           firstName: "Unknown",
+                        lastName: "Customer",
+                           email: "N/A",
+                          phoneNumber: "N/A"
+                          },
+                       };
+            }
+            
           })
+        );
+
+        // Sort by newest first (createdDate)
+        const sortedBookings = bookingsWithCustomer.sort((a, b) => 
+          new Date(b.createdDate) - new Date(a.createdDate)
         );
 
         setBookings(bookingsWithCustomer);

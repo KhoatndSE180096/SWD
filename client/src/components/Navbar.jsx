@@ -31,6 +31,17 @@ const Navbar = () => {
     };
   }, [showModal]);
 
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfilePopupOpen && !event.target.closest('.profile-dropdown')) {
+        setIsProfilePopupOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProfilePopupOpen]);
+
 
   const isLoginPage = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/customer-profile" || location.pathname === "/forgot-password";
 
@@ -87,27 +98,77 @@ const Navbar = () => {
       {!isLoginPage && (
         <div className="relative">
           {token ? (
-            <button onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}>
-              <i className="fas fa-user text-[#E27585] text-[30px]"></i>
-            </button>
+            <div className="relative profile-dropdown">
+              <button 
+                onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}
+                className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-200 rounded-full px-3 py-2 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-[#E27585] to-[#c86c79] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  {fullName ? fullName.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span className="hidden md:block text-gray-700 font-medium text-sm max-w-[100px] truncate">
+                  {fullName || 'User'}
+                </span>
+                <i className={`fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200 ${isProfilePopupOpen ? 'rotate-180' : ''}`}></i>
+              </button>
+
+              {isProfilePopupOpen && (
+                <div className="absolute right-0 mt-3 w-56 bg-white border border-gray-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                  {/* Header */}
+                  <div className="bg-gradient-to-r from-[#E27585] to-[#c86c79] px-4 py-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-bold">
+                        {fullName ? fullName.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm truncate max-w-[120px]">
+                          {fullName || 'User'}
+                        </p>
+                        <p className="text-white/80 text-xs">Customer</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <NavLink 
+                      to="/customer-profile" 
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+                      onClick={() => setIsProfilePopupOpen(false)}
+                    >
+                      <i className="fas fa-user-circle text-[#E27585] w-5 text-center mr-3"></i>
+                      <span className="font-medium">Profile</span>
+                    </NavLink>
+                    
+                    <NavLink 
+                      to="/booking-history" 
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+                      onClick={() => setIsProfilePopupOpen(false)}
+                    >
+                      <i className="fas fa-history text-[#E27585] w-5 text-center mr-3"></i>
+                      <span className="font-medium">Booking History</span>
+                    </NavLink>
+
+                    <div className="border-t border-gray-100 my-1"></div>
+                    
+                    <button 
+                      onClick={() => {
+                        setIsProfilePopupOpen(false);
+                        setShowModal(true);
+                      }} 
+                      className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-150"
+                    >
+                      <i className="fas fa-sign-out-alt text-red-500 w-5 text-center mr-3"></i>
+                      <span className="font-medium">Log out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
-            <NavLink to="/login" className="hidden md:block bg-[#e78999] text-white text-[18px] px-4 py-2 rounded-full shadow-sm hover:opacity-80">
+            <NavLink to="/login" className="hidden md:block bg-[#e78999] text-white text-[18px] px-6 py-2 rounded-full shadow-sm hover:opacity-80 transition-opacity duration-200">
               Login
             </NavLink>
-          )}
-
-          {isProfilePopupOpen && token && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-              <div className="block px-4 py-2 text-gray-800">
-                Welcome, {fullName}
-              </div>
-              <NavLink to="/customer-profile" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                Profile
-              </NavLink>
-              <button onClick={() => setShowModal(true)} className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
-                Log out
-              </button>
-            </div>
           )}
         </div>
       )}

@@ -131,12 +131,16 @@ const ViewBookingHistory = () => {
       const response = await axios.get(
         "/api/booking-requests/history-bookings"
       );
-      setBookings(
-        response.data.bookings.map((booking) => ({
+      
+      // Sort bookings by createdDate (newest first)
+      const sortedBookings = response.data.bookings
+        .map((booking) => ({
           ...booking,
-          feedbackSubmitted: booking.feedback ? true : false, // Add feedbackSubmitted flag
+          feedbackSubmitted: booking.feedback ? true : false,
         }))
-      );
+        .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+      
+      setBookings(sortedBookings);
     } catch (err) {
       console.error(
         "Error fetching bookings:",
